@@ -53,6 +53,6 @@ $router = new Router('DemoMVCAlpha');
 // Ajout des routes
 $router->addRoute('', 'HomeController@index'); // Pour la racine
 $router->addRoute('tasks', 'TaskController@index'); // Pour la racine
-
+$router->addRoute('about', 'HomeController@about');
 // Appel de la méthode route
 $router->route(trim($_SERVER['REQUEST_URI'], '/'));
