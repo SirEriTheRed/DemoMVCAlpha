@@ -6,6 +6,7 @@
     <title>Erreur 404</title>
 </head>
 <body>
+    <?php require 'views/components/navbar.html'; ?>
     <h1>404</h1>
     <p>Nous ne pouvons pas trouver une page correspondante</p>
 </body>

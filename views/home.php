@@ -6,6 +6,7 @@
     <title>Accueil</title>
 </head>
 <body>
+    <?php require 'views/components/navbar.html'; ?>
     <h1> Bienvenue sur le site du gestionnaire de tâches</h1>
 </body>
 </html>

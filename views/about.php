@@ -6,6 +6,7 @@
     <title>À propos</title>
 </head>
 <body>
+    <?php require 'views/components/navbar.html'; ?>
     <h1>Qu'est-ce qu'un routeur ?</h1>
     <dd>
       Le <dfn>routeur</dfn> est un composant du code qui a

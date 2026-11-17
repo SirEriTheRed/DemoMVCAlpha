@@ -6,6 +6,7 @@
     <title>Tâche #<?php echo $task['id']; ?></title>
 </head>
 <body>
+<?php require 'views/components/navbar.html'; ?>
 <h1><?php echo 'tache ' . $task['id'] . ' : ' . $task['title']; ?></h1>
 <p><a href="/DemoMVCAlpha/tasks">Retour à la liste</a></p>
 </body>
