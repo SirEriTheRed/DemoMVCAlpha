@@ -1,6 +1,8 @@
 <?php
+
 class Task {
-    public function getAllTasks() {
+    public function getAllTasks()
+    {
         // COn peut mettre ici le code nécessaire pour récupérer toutes les tâches depuis la base de données
         $tasks = array(
             array('id' => 1, 'title' => 'Suivre les cours associés à PHP'),
@@ -10,5 +12,17 @@ class Task {
             array('id' => 5, 'title' => 'Ajouter meles fonctionnalités du projet'),
         );
         return $tasks;
+    }
+
+    public function getTask($id)
+    {
+        $tasks = $this->getAllTasks();
+
+        foreach ($tasks as $task) {
+            if ($task['id'] == $id) {
+                return $task;
+            }
+        }
+        throw new Exception("Tache #{$id} introuvable");
     }
 }

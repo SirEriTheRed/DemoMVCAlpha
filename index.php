@@ -10,15 +10,25 @@ class Router
 {
     private $routes = [];
     private $prefix;
+    private $baseRoute;
 
     public function __construct($prefix = '')
     {
         $this->prefix = trim($prefix, '/');
     }
 
-    public function addRoute($uri, $controllerMethod)
+    public function mount($baseRoute, $function)
     {
-        $this->routes[trim($uri, '/')] = $controllerMethod;
+        $currentRoute = $this->baseRoute;
+        $this->baseRoute .= $baseRoute;
+        call_user_func($function);
+        $this->baseRoute = $currentRoute;
+    }
+
+    public function get($pattern, $function)
+    {
+        $pattern = trim($this->baseRoute . '/' . $pattern, '/');
+        $this->routes[] = ['pattern' => $pattern, 'function' => $function];
     }
 
     public function route($url)
@@ -31,19 +41,22 @@ class Router
         // Suppression des barres obliques en trop
         $url = trim($url, '/');
 
-        // Vérification de la correspondance de l'URL à une route définie
-        if (array_key_exists($url, $this->routes)) {
-            // Extraction du nom du contrôleur et de la méthode
-            list($controllerName, $methodName) = explode('@', $this->routes[$url]);
+        // Parcourir les routes dans l'ordre
+        foreach ($this->routes as $route) {
+            $regex = '#^' . preg_replace('/\{(\w+)\}/', '([^/]+)', $route['pattern']) . '$#';
 
-            // Instanciation du contrôleur et appel de la méthode
-            $controller = new $controllerName();
-            $controller->$methodName();
-        } else {
-            // Gestion des erreurs (page 404, etc.)
-            http_response_code(404);
-            require 'views/error404.php';
+            if (preg_match($regex, $url, $matches)) {
+                array_shift($matches);
+
+                list($controllerName, $methodName) = explode('@', $route['function']);
+                $controller = new $controllerName();
+                $controller->$methodName(...$matches);
+                return;
+            }
         }
+
+        http_response_code(404);
+        require 'views/error404.php';
     }
 }
 
@@ -51,8 +64,14 @@ class Router
 $router = new Router('DemoMVCAlpha');
 
 // Ajout des routes
-$router->addRoute('', 'HomeController@index'); // Pour la racine
-$router->addRoute('tasks', 'TaskController@index'); // Pour la racine
-$router->addRoute('about', 'HomeController@about');
+$router->get('', 'HomeController@index'); // Racine
+$router->get('about', 'HomeController@about'); // A propos
+
+// montage tasks
+$router->mount('/tasks', function () use ($router) {
+    $router->get('', 'TaskController@index');
+    $router->get('{id}', 'TaskController@show');
+});
+
 // Appel de la méthode route
 $router->route(trim($_SERVER['REQUEST_URI'], '/'));
